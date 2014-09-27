@@ -3,6 +3,9 @@
 import sys
 import os
 import struct
+import urllib3,json
+from json import JSONEncoder
+
 from ctypes import (CDLL, get_errno)
 from ctypes.util import find_library
 from socket import (
@@ -37,9 +40,9 @@ if err < 0:
 
 # allows LE advertising events
 hci_filter = struct.pack(
-    "<IQH", 
-    0x00000010, 
-    0x4000000000000000, 
+    "<IQH",
+    0x00000010,
+    0x4000000000000000,
     0
 )
 sock.setsockopt(SOL_HCI, HCI_FILTER, hci_filter)
@@ -64,5 +67,14 @@ while True:
     #print(':'.join("{0:02x}".format(x) for x in data[12:6:-1]))
     #print(':'.join("{0:02x}".format(x) for x in data[17:]))
     print("MAC: " + ':'.join("{0:02x}".format(x) for x in data[12:6:-1]))
-    rssi = 256 - int("{0:02x}".format(data[17]), 16)
+    did = ':'.join("{0:02x}".format(x) for x in data[12:6:-1])
+    rssi = 265 - int("{0:02x}".format(data[17]), 16)
     print("RSSI: ",rssi)
+    distance = 10**((rssi - 77)/22)
+    print("Distance: ",distance)
+    url = 'http://192.168.0.102:9773/endpoints/HTTPInputAdaptor/jsonBuilder'
+    message_body = {"sid":"node0","did":did,"distance":distance}
+    jsonString = JSONEncoder().encode(message_body)
+
+    pool = urllib3.PoolManager()
+    pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
