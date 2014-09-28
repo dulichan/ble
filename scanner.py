@@ -68,7 +68,7 @@ while True:
     #print(':'.join("{0:02x}".format(x) for x in data[17:]))
     print("MAC: " + ':'.join("{0:02x}".format(x) for x in data[12:6:-1]))
     did = ':'.join("{0:02x}".format(x) for x in data[12:6:-1])
-    rssi = 265 - int("{0:02x}".format(data[17]), 16)
+    rssi = 256 - int("{0:02x}".format(data[17]), 16)
     print("RSSI: ",rssi)
     distance = 10**((rssi - 77)/22)
     print("Distance: ",distance)
