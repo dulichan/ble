@@ -62,6 +62,7 @@ if err < 0:
 
 while True:
     data = sock.recv(1024)
+    print ("all data "+data)
     # print bluetooth address from LE Advert. packet
     print("Advertising Packet " + ':'.join("{0:02x}".format(x) for x in data[:]))
     #print(':'.join("{0:02x}".format(x) for x in data[12:6:-1]))
@@ -72,9 +73,9 @@ while True:
     print("RSSI: ",rssi)
     distance = 10**((rssi - 77)/22)
     print("Distance: ",distance)
-    #url = 'http://192.168.0.102:9773/endpoints/HTTPInputAdaptor/jsonBuilder'
-    #message_body = {"sid":"node0","did":did,"distance":distance}
-    #jsonString = JSONEncoder().encode(message_body)
+    url = 'http://192.168.0.100:3000/iot'
+    message_body = {"sid":"node0","did":did,"distance":distance, "rssi": rssi}
+    jsonString = JSONEncoder().encode(message_body)
 
-    #pool = urllib3.PoolManager()
-    #pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
+    pool = urllib3.PoolManager()
+    pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
