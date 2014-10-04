@@ -72,9 +72,9 @@ while True:
     print("RSSI: ",rssi)
     distance = 10**((rssi - 77)/22)
     print("Distance: ",distance)
-    url = 'http://192.168.0.102:9773/endpoints/HTTPInputAdaptor/jsonBuilder'
-    message_body = {"sid":"node0","did":did,"distance":distance}
-    jsonString = JSONEncoder().encode(message_body)
+    #url = 'http://192.168.0.102:9773/endpoints/HTTPInputAdaptor/jsonBuilder'
+    #message_body = {"sid":"node0","did":did,"distance":distance}
+    #jsonString = JSONEncoder().encode(message_body)
 
-    pool = urllib3.PoolManager()
-    pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
+    #pool = urllib3.PoolManager()
+    #pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
