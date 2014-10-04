@@ -62,7 +62,6 @@ if err < 0:
 
 while True:
     data = sock.recv(1024)
-    print ("all data "+data)
     # print bluetooth address from LE Advert. packet
     print("Advertising Packet " + ':'.join("{0:02x}".format(x) for x in data[:]))
     #print(':'.join("{0:02x}".format(x) for x in data[12:6:-1]))
