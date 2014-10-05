@@ -33,6 +33,9 @@ dev_id = bluez.hci_get_route(None)
 sock = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI)
 sock.bind((dev_id,))
 
+rssi_list = []
+variant = 86.34375
+
 err = bluez.hci_le_set_scan_parameters(sock.fileno(), 0, 0x10, 0x10, 0, 0, 1000);
 if err < 0:
     raise Exception("Set scan parameters failed")
@@ -70,11 +73,17 @@ while True:
     did = ':'.join("{0:02x}".format(x) for x in data[12:6:-1])
     rssi = 256 - int("{0:02x}".format(data[17]), 16)
     print("RSSI: ",rssi)
-    distance = 10**((rssi - 77)/22)
-    print("Distance: ",distance)
-    url = 'http://192.168.0.100:3000/iot'
-    message_body = {"sid":"node0","did":did,"distance":distance, "rssi": rssi}
-    jsonString = JSONEncoder().encode(message_body)
+    if(did=="df:4e:a8:34:40:77"):
+        rssi_list.insert(0, rssi)
+        if(len(rssi_list)==4):
+            rssi_list.pop()
+        variant = sum(rssi_list)/len(rssi_list)
+    else:
+        distance = 10**((rssi - variant)/22)
+        print("Distance: ",distance)
+        url = 'http://192.168.0.100:3000/iot'
+        message_body = {"sid":"node0","did":did,"distance":distance, "rssi": rssi}
+        jsonString = JSONEncoder().encode(message_body)
 
-    pool = urllib3.PoolManager()
-    pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
+        pool = urllib3.PoolManager()
+        pool.urlopen('POST',url, headers={'Content-Type':'application/json'}, body=jsonString).data
