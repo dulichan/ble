@@ -33,7 +33,6 @@ dev_id = bluez.hci_get_route(None)
 sock = socket(AF_BLUETOOTH, SOCK_RAW, BTPROTO_HCI)
 sock.bind((dev_id,))
 
-rssi_list = []
 variant = 86.34375
 
 err = bluez.hci_le_set_scan_parameters(sock.fileno(), 0, 0x10, 0x10, 0, 0, 1000);
@@ -74,10 +73,7 @@ while True:
     rssi = 256 - int("{0:02x}".format(data[17]), 16)
     print("RSSI: ",rssi)
     if(did=="df:4e:a8:34:40:77"):
-        rssi_list.insert(0, rssi)
-        if(len(rssi_list)==4):
-            rssi_list.pop()
-        variant = sum(rssi_list)/len(rssi_list)
+        variant = rssi
     else:
         distance = 10**((rssi - variant)/22)
         print("Distance: ",distance)
